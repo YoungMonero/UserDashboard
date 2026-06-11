@@ -27,7 +27,7 @@ export default function ProfileForm({
   } = useFormik({
     initialValues,
     validationSchema: ProfileSchema,
-    onSubmit: (values, actions) => {
+    onSubmit: (values) => {
       const trimmed = {
         ...values,
         firstname: values.firstname.trim(),
@@ -35,7 +35,6 @@ export default function ProfileForm({
         email: values.email.trim(),
       };
       onSubmit(trimmed);
-      actions.resetForm();
     },
   });
 
