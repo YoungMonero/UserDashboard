@@ -1,16 +1,68 @@
-# React + Vite
+# User Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single-page React application for creating and managing a user profile. Built with React, React Router, Formik, and Yup. Deployed on Netlify.
 
-Currently, two official plugins are available:
+## What it does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Create profile** — First-time visitors fill in their name, email, and an optional profile picture.
+- **Persist session** — Profile data is stored in `localStorage`. Returning visitors land directly on their profile page without seeing the create form again.
+- **View profile** — Clean dashboard card showing avatar, name, and email.
+- **Edit profile** — Update any field; changes are saved back to `localStorage` immediately.
 
-## React Compiler
+## Routes
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Path | Description |
+|------|-------------|
+| `/` | Create profile (redirects to `/display` if profile already exists) |
+| `/display` | View profile |
+| `/update` | Edit profile |
 
-## Expanding the ESLint configuration
+## Running locally
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+cd dashboard
+npm install
+npm run dev
+```
+
+Then open [http://localhost:5173](http://localhost:5173).
+
+## Building for production
+
+```bash
+npm run build
+```
+
+Output goes to `dist/`. The `public/_redirects` file and `netlify.toml` ensure Netlify serves `index.html` for all routes so client-side routing works on hard refresh and direct URL access.
+
+## Tech stack
+
+- [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+- [React Router v6](https://reactrouter.com/) — client-side routing
+- [Formik](https://formik.org/) + [Yup](https://github.com/jquense/yup) — form state and validation
+- [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) — profile persistence
+
+## Project structure
+
+```
+dashboard/
+├── public/
+│   └── _redirects          # Netlify SPA fallback
+├── netlify.toml            # Netlify redirect config (belt-and-suspenders)
+└── src/
+    ├── components/
+    │   ├── Banner.jsx
+    │   ├── Profile.jsx       # Profile display
+    │   ├── ProfileForm.jsx   # Shared create/edit form
+    │   └── UpdateForm.jsx
+    ├── context/
+    │   └── user-context.js
+    ├── pages/
+    │   ├── CreateAccount.jsx
+    │   ├── DisplayAccount.jsx
+    │   └── UpdateAccount.jsx
+    ├── schemas/
+    │   └── profile-schema.js  # Yup validation
+    ├── constants.js
+    └── App.jsx               # Router + localStorage bootstrap
+```

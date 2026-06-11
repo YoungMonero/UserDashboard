@@ -1,34 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import CreateAccount from './pages/CreateAccount'
+import DisplayAccount from './pages/DisplayAccount'
+import UpdateAccount from './pages/UpdateAccount'
+import UserContext from './context/user-context'
+import { InitialUser } from './constants'
+import { useEffect, useMemo, useState } from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState(() => {
+    const currentUser = localStorage.getItem('user')
+    return currentUser ? JSON.parse(currentUser) : InitialUser
+  })
+
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(user))
+  }, [user])
+
+  const contextValue = useMemo(() => ({ user, setUser }), [user, setUser])
+
+  // Determine if user already has a profile (all required fields filled)
+  const hasProfile = user.firstname && user.lastname && user.email
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <UserContext.Provider value={contextValue}>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path='/'
+            element={hasProfile ? <Navigate to='/display' replace /> : <CreateAccount />}
+          />
+          <Route path='/display' element={<DisplayAccount />} />
+          <Route path='/update' element={<UpdateAccount />} />
+        </Routes>
+      </BrowserRouter>
+    </UserContext.Provider>
   )
 }
 
